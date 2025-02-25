@@ -204,4 +204,11 @@ header {
 .cart-section.open {
     right: 0;
 }
+
+}
+
+@media (max-width: 456px) {
+    .product_card li {
+        width: 90%;
+        }
 }
