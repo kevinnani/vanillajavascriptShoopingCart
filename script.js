@@ -34,10 +34,18 @@ function reducer(state, action) {
             updateStock(action.payload.id, -1);
             return { ...state, cart, products };
 
-        case "INCREASE_QUANTITY":
-            cart = cart.map(i => i.id === action.payload.id ? { ...i, quantity: i.quantity + 1 } : i);
-            updateStock(action.payload.id, -1);
-            return { ...state, cart, products };
+            case "INCREASE_QUANTITY":
+                let product = products.find(p => p.id === action.payload.id);
+                let cartItem = cart.find(i => i.id === action.payload.id);
+                
+                // Check if stock is available before increasing quantity
+                if (product && product.stock > 0) {
+                    cart = cart.map(i => i.id === action.payload.id ? { ...i, quantity: i.quantity + 1 } : i);
+                    updateStock(action.payload.id, -1);
+                }
+                
+                return { ...state, cart, products };
+            
 
         case "DECREASE_QUANTITY":
             cart = cart.map(i => i.id === action.payload.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0);
@@ -81,7 +89,7 @@ function renderCart() {
             <img src="${i.image}" alt="${i.name}" width="100">
 
            <div> <h4>${i.name}</h4>
-            <p>₹${i.price} x ${i.quantity}</p>
+            <p>₹${i.price}</p>
             <button onclick="decreaseQuantity(${i.id})">-</button>
             <span>${i.quantity}</span>
             <button onclick="increaseQuantity(${i.id})">+</button>
